@@ -1,0 +1,74 @@
+#WPized_Post_Custom_Content_Metabox .help-message {
+	padding: 10px;
+	background: #EAF2FA;
+	border: 1px solid rgba(122, 155, 190, 0.21);
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	color: #7A9BBE;
+	text-shadow: 1px 1px 0 #fff;
+	font-family: sans-serif;
+	font-size: 12px;
+}
+
+#custom-content-list .inside:after {
+	clear: both;
+	content: "\200B";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+
+#custom-content-list .ui-state-highlight {
+	background-color: #fff3a5;
+	min-height: 50px;
+}
+
+.custom-content-options {
+	position: relative;
+	float: left;
+	width: 25%;
+	height: 200px;
+	padding-right: 3%;
+}
+
+.custom-content-options label {
+	display: block;
+	min-height: 20px;
+	padding-left: 20px;
+}
+
+.custom-content-options input[type="radio"] {
+	float: left;
+	margin-left: -20px;
+}
+
+.custom-content-options .remove-custom-content {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	padding: 0 2px;
+	color: #f00;
+	text-decoration: none;
+	border-bottom: 1px solid #f00;
+}
+
+.custom-content-options .remove-custom-content:hover {
+	border-bottom-color: #f00;
+	background-color: #f00;
+	color: #fff;
+}
+
+.ace-editor-wrapper {
+	position:relative;
+	float: right;
+	width: 70%;
+	height:200px;
+}
+.ace-editor-content {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
