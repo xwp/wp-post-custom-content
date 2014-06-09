@@ -1,4 +1,8 @@
 <?php
+/**
+ * Plugin Name: Custom (unfiltered) content for individual posts
+ * Author: Dzikri Aziz <dzikri@x-team.com>, Akeda Bagus <akeda@x-team.com>
+ */
 
 /**
  * Custom (unfiltered) content for individual posts
