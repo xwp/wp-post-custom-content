@@ -33,13 +33,13 @@ class WPized_Post_Custom_Content {
 
 
 	static function get_post_types() {
-		assert(WPized_Theme_Config::is_assoc_array(self::$options['post_types']));
-		return array_keys(array_filter(self::$options['post_types']));
+		assert( WPized_Theme_Config::is_assoc_array( self::$options['post_types'] ) );
+		return array_keys( array_filter( self::$options['post_types'] ) );
 	}
 
 
 	static function _action_admin_init() {
-		if ( !current_user_can( self::$options['capability'] ) ) {
+		if ( ! current_user_can( self::$options['capability'] ) ) {
 			return;
 		}
 
@@ -83,9 +83,12 @@ class WPized_Post_Custom_Content {
 	static function get_script_registry( $dep_args = array() ) {
 		$dep_args = wp_parse_args( $dep_args );
 		return array(
-			'ace-editor' => array_merge( $dep_args, array(
-				'src' => WPIZED_BASE_LIB_URL . '/plugins/js/ace/ace.js',
-			) ),
+			'ace-editor' => array_merge(
+				$dep_args,
+				array(
+					'src' => WPIZED_BASE_LIB_URL . '/plugins/js/ace/ace.js',
+				)
+			)
 		);
 	}
 
@@ -100,9 +103,14 @@ class WPized_Post_Custom_Content {
 		if ( ! in_array( $post->post_type, self::get_post_types() ) )
 			return null;
 
-		extract( shortcode_atts( array(
-			'id' => '',
-		), $atts ) );
+		extract(
+			shortcode_atts(
+				array(
+					'id' => '',
+				),
+				$atts
+			)
+		);
 
 		$custom_content = get_post_meta( $post->ID, WPized_Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
 
@@ -119,15 +127,20 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 	const META_KEY_CONTENT = '_wpized_post_custom_content';
 	const META_KEY_RENDER  = '_wpized_post_custom_content_render';
 
-	const CSS_HANDLER      = 'wpized_post_custom_content_css';
-	const JS_HANDLER       = 'wpized_post_custom_content_js';
-	const JS_I18N_VAR      = 'wpized_post_custom_content_i18n';
+	const CSS_HANDLER = 'wpized_post_custom_content_css';
+	const JS_HANDLER  = 'wpized_post_custom_content_js';
+	const JS_I18N_VAR = 'wpized_post_custom_content_i18n';
 
 	public function __construct( $args = array() ) {
-		parent::__construct( array_merge( array(
-			'title'   => __( 'Custom Content', WPIZED_LOCALE ),
-			'scripts' => WPized_Post_Custom_Content::get_script_registry(),
-		), $args) );
+		parent::__construct(
+			array_merge(
+				array(
+					'title'   => __( 'Custom Content', WPIZED_LOCALE ),
+					'scripts' => WPized_Post_Custom_Content::get_script_registry(),
+				),
+				$args
+			)
+		);
 
 		add_action( 'load-post.php',     array( __CLASS__, 'scripts_styles' ) );
 		add_action( 'load-post-new.php', array( __CLASS__, 'scripts_styles' ) );
@@ -148,7 +161,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 				<div class="handlediv" title="Click to toggle"><br></div>
 				<h3 class="hndle">
 					<span><?php _e( 'Custom content #id =', WPIZED_LOCALE ) ?></span>
-					<span class="row-index"><?php echo esc_html( $index+1 ) ?></span>
+					<span class="row-index"><?php echo esc_html( $index + 1 ) ?></span>
 				</h3>
 
 				<div class="inside">
@@ -160,7 +173,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 								id="<?php echo esc_attr( sprintf( '%s_%d_1', self::META_KEY_RENDER, $index ) ) ?>"
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="1"
-								<?php checked( isset( $custom_content_render[$index] ) ? intval($custom_content_render[$index]) : 0, 1 ) ?>>
+								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 1 ) ?>>
 							<?php _e( 'Render automatically below the content', WPIZED_LOCALE ); ?>
 						</label>
 						<br>
@@ -170,10 +183,10 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 								id="<?php echo esc_attr( sprintf( '%s_%d_0', self::META_KEY_RENDER, $index ) ) ?>"
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="0"
-								<?php checked( isset( $custom_content_render[$index] ) ? intval($custom_content_render[$index]) : 0, 0 ) ?>>
+								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
 							<?php _e( 'Use shortcode to render', WPIZED_LOCALE ); ?>
 							<br>
-							<code class="shortcode"><?php printf('[%s id=%d]', WPized_Post_Custom_Content::SHORTCODE, $index+1); ?></code>
+							<code class="shortcode"><?php printf( '[%s id=%d]', WPized_Post_Custom_Content::SHORTCODE, $index + 1 ); ?></code>
 						</label>
 
 						<a href="#" class="remove-custom-content"><?php _e( 'Remove', WPIZED_LOCALE ) ?></a>
@@ -197,7 +210,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 
 	public function save( $post ) {
 		foreach ( array( self::META_KEY_CONTENT, self::META_KEY_RENDER ) as $key ) {
-			if ( isset( $_POST[ $key ] ) && !empty( $_POST[ $key ] ) ) {
+			if ( isset( $_POST[ $key ] ) && ! empty( $_POST[ $key ] ) ) {
 				update_post_meta( $post->ID, $key, $_POST[ $key ] );
 			}
 			else {
