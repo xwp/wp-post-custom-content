@@ -1,14 +1,10 @@
 <?php
 /**
- * Plugin Name: Custom (unfiltered) content for individual posts
- * Author: Dzikri Aziz <dzikri@x-team.com>, Akeda Bagus <akeda@x-team.com>
- */
-
-/**
- * Custom (unfiltered) content for individual posts
- *
- * @author Dzikri Aziz <dzikri@x-team.com>
- * @author Akeda Bagus <akeda@x-team.com>
+ * Plugin Name: Custom Content for Individual Posts
+ * Description: This plugin allows you to add (unfiltered) content into one or more fields for individual posts (or other post types) and then place that content into the post body by a short code. You can also have the content of those fields automatically appended to the content of the post.
+ * Version: 1.0.0
+ * Author: X-Team
+ * Author URI: http://x-team.com/wordpress/
  */
 
 use XTeam\Custom_Content;
