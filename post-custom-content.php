@@ -105,7 +105,7 @@ class Post_Custom_Content {
 			'ace-editor' => array_merge(
 				$dep_args,
 				array(
-					'src' => plugins_url( 'vendor/ace/ace.js' , __FILE__ ),
+					'src' => plugins_url( 'vendor/ace/ace.js', __FILE__ ),
 				)
 			)
 		);

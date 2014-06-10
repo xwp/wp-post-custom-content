@@ -18,7 +18,7 @@
 				});
 			},
 			'bind_ace'     : function($el) {
-				var index           = $el.attr('data-index'),
+				var index                       = $el.attr('data-index'),
 						$wrapper        = $('.ace-editor-wrapper', $el),
 						$textarea       = $('textarea', $wrapper),
 						$editor_element = $('<div class="ace-editor-content" id="ace-editor-content-' + index + '" />'),
@@ -85,8 +85,8 @@
 					.attr('name', settings.field_content + '[' + index + ']')
 					.attr('id', settings.field_content + '_' + index)
 					.val('').show();
-				$('.shortcode', $new_row).text( '[' + settings.shortcode_tag + ' id=' + (index+1) + ']' );
-				$('.row-index', $new_row).text(index+1);
+				$( '.shortcode', $new_row ).text( '[' + settings.shortcode_tag + ' id=' + ( index + 1 ) + ']' );
+				$( '.row-index', $new_row ).text( index + 1 );
 
 				// Inject into the list
 				$container.append($new_row);
