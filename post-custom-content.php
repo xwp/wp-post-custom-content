@@ -11,20 +11,37 @@
  * @author Akeda Bagus <akeda@x-team.com>
  */
 
-class WPized_Post_Custom_Content {
+use XTeam\Custom_Content;
+
+require_once(  plugin_dir_path( __FILE__ ) . 'metabox.class.php' );
+
+$settings = array(
+	'post_types' => array(
+		'post'               => true,
+		'page'               => true,
+		'rogers_alert'       => false,
+		'rogers_bio'         => true,
+		'rogers_contest'     => true,
+		'rogers_episode'     => true,
+		'rogers_event'       => false,
+		'rogers_extra'       => true,
+		'rogers_poll'        => false,
+		'rogers_social_post' => false,
+		'rogers_spotlight'   => false,
+		'rogers_video'       => false,
+	),
+	'capability' => 'edit_others_posts',
+);
+
+Post_Custom_Content::setup( $settings );
+
+class Post_Custom_Content {
 	const SHORTCODE = 'wpized_custom_content';
 
 	static $options = array();
 
 	static function setup( $options = array() ){
-		self::$options = WPized_Theme_Config::recursive_array_merge_assoc(
-			array(
-				'post_types' => array(),
-				'capability' => 'edit_others_posts',
-			),
-			self::$options,
-			$options === true || empty($options) ? array() : $options
-		);
+		self::$options = $options;
 
 		if ( empty(self::$options['post_types']) ){
 			return;
@@ -35,9 +52,7 @@ class WPized_Post_Custom_Content {
 		add_shortcode( self::SHORTCODE, array( __CLASS__, '_shortcode_handler' ) );
 	}
 
-
 	static function get_post_types() {
-		assert( WPized_Theme_Config::is_assoc_array( self::$options['post_types'] ) );
 		return array_keys( array_filter( self::$options['post_types'] ) );
 	}
 
@@ -48,7 +63,7 @@ class WPized_Post_Custom_Content {
 		}
 
 		foreach ( self::get_post_types() as $post_type ) {
-			$metabox = new WPized_Post_Custom_Content_Metabox( array( 'page' => $post_type ) );
+			$metabox = new Post_Custom_Content_Metabox( array( 'page' => $post_type ) );
 			$metabox->register();
 		}
 	}
@@ -63,8 +78,8 @@ class WPized_Post_Custom_Content {
 	 * @filter the_content
 	 */
 	static function _append_custom_content( $content ) {
-		$custom_content        = get_post_meta( get_the_ID(), WPized_Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
-		$custom_content_render = get_post_meta( get_the_ID(), WPized_Post_Custom_Content_Metabox::META_KEY_RENDER,  true );
+		$custom_content        = get_post_meta( get_the_ID(), Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
+		$custom_content_render = get_post_meta( get_the_ID(), Post_Custom_Content_Metabox::META_KEY_RENDER,  true );
 
 		if ( ! empty( $custom_content ) && ! is_array( $custom_content ) ) {
 			// Previous postmeta only store a single string
@@ -90,7 +105,7 @@ class WPized_Post_Custom_Content {
 			'ace-editor' => array_merge(
 				$dep_args,
 				array(
-					'src' => WPIZED_BASE_LIB_URL . '/plugins/js/ace/ace.js',
+					'src' => plugins_url( 'vendor/ace/ace.js' , __FILE__ ),
 				)
 			)
 		);
@@ -116,7 +131,7 @@ class WPized_Post_Custom_Content {
 			)
 		);
 
-		$custom_content = get_post_meta( $post->ID, WPized_Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
+		$custom_content = get_post_meta( $post->ID, Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
 
 		if ( isset( $custom_content[ $id - 1 ] ) )
 			return $custom_content[ $id - 1 ];
@@ -126,7 +141,7 @@ class WPized_Post_Custom_Content {
 }
 
 
-class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
+class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	const META_KEY_CONTENT = '_wpized_post_custom_content';
 	const META_KEY_RENDER  = '_wpized_post_custom_content_render';
@@ -140,7 +155,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 			array_merge(
 				array(
 					'title'   => __( 'Custom Content', WPIZED_LOCALE ),
-					'scripts' => WPized_Post_Custom_Content::get_script_registry(),
+					'scripts' => Post_Custom_Content::get_script_registry(),
 				),
 				$args
 			)
@@ -190,7 +205,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
 							<?php _e( 'Use shortcode to render', WPIZED_LOCALE ); ?>
 							<br>
-							<code class="shortcode"><?php printf( '[%s id=%d]', WPized_Post_Custom_Content::SHORTCODE, $index + 1 ); ?></code>
+							<code class="shortcode"><?php printf( '[%s id=%d]', Post_Custom_Content::SHORTCODE, $index + 1 ); ?></code>
 						</label>
 
 						<a href="#" class="remove-custom-content"><?php _e( 'Remove', WPIZED_LOCALE ) ?></a>
@@ -226,20 +241,20 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 
 	public static function scripts_styles() {
 		$current_screen = get_current_screen();
-		if ( in_array( $current_screen->post_type, WPized_Post_Custom_Content::get_post_types() ) ) {
+		if ( in_array( $current_screen->post_type, Post_Custom_Content::get_post_types() ) ) {
 			$asset_name = 'post_custom_content';
 
 			// Enqueue stylesheet
 			wp_enqueue_style(
 				self::CSS_HANDLER,
-				sprintf( '%s/includes/wpized_base/plugins/%s/%s.css', content_url(), $asset_name, $asset_name )
+				plugins_url( 'post-custom-content.css' , __FILE__ )
 			);
 
 			// Enqueue JS to set featured event
 			wp_enqueue_script( 'jquery-ui-sortable' );
 			wp_enqueue_script(
 				self::JS_HANDLER,
-				sprintf( '%s/includes/wpized_base/plugins/%s/%s.js', content_url(), $asset_name, $asset_name )
+				plugins_url( 'post-custom-content.js' , __FILE__ )
 			);
 
 			// Enqueue variables
@@ -249,7 +264,7 @@ class WPized_Post_Custom_Content_Metabox extends WPized_MetaBox {
 				array(
 					'field_render'  => self::META_KEY_RENDER,
 					'field_content' => self::META_KEY_CONTENT,
-					'shortcode_tag' => WPized_Post_Custom_Content::SHORTCODE,
+					'shortcode_tag' => Post_Custom_Content::SHORTCODE,
 					'help_message'  => __( '⤹ Drag and drop rows below to reorder', WPIZED_LOCALE ),
 				)
 			);
