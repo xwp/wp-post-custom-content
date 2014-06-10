@@ -15,21 +15,24 @@ use XTeam\Custom_Content;
 
 require_once(  plugin_dir_path( __FILE__ ) . 'metabox.class.php' );
 
+$post_types = array(
+	'post'               => true,
+	'page'               => true,
+	'rogers_alert'       => false,
+	'rogers_bio'         => true,
+	'rogers_contest'     => true,
+	'rogers_episode'     => true,
+	'rogers_event'       => false,
+	'rogers_extra'       => true,
+	'rogers_poll'        => false,
+	'rogers_social_post' => false,
+	'rogers_spotlight'   => false,
+	'rogers_video'       => false,
+);
+$post_types = apply_filters( 'custom_content_post_types', $post_types );
+
 $settings = array(
-	'post_types' => array(
-		'post'               => true,
-		'page'               => true,
-		'rogers_alert'       => false,
-		'rogers_bio'         => true,
-		'rogers_contest'     => true,
-		'rogers_episode'     => true,
-		'rogers_event'       => false,
-		'rogers_extra'       => true,
-		'rogers_poll'        => false,
-		'rogers_social_post' => false,
-		'rogers_spotlight'   => false,
-		'rogers_video'       => false,
-	),
+	'post_types' => $post_types,
 	'capability' => 'edit_others_posts',
 );
 
