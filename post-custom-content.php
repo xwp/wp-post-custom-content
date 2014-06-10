@@ -107,7 +107,7 @@ class Post_Custom_Content {
 				array(
 					'src' => plugins_url( 'vendor/ace/ace.js', __FILE__ ),
 				)
-			)
+			),
 		);
 	}
 
@@ -145,6 +145,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	const META_KEY_CONTENT = '_wpized_post_custom_content';
 	const META_KEY_RENDER  = '_wpized_post_custom_content_render';
+	const META_KEY_HISTORY = '_wpized_post_custom_content_history';
 
 	const CSS_HANDLER = 'wpized_post_custom_content_css';
 	const JS_HANDLER  = 'wpized_post_custom_content_js';
@@ -228,6 +229,13 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 	}
 
 	public function save( $post ) {
+		$current_content = get_post_meta( $post->ID, self::META_KEY_CONTENT, true );
+		$posted = str_replace( "\\", '', $_POST[ self::META_KEY_CONTENT ] );
+
+		if ( ! self::posted_same_as_from_db( $posted, $current_content ) ) {
+			self::record_custom_content_change( $post->ID );
+		}
+
 		foreach ( array( self::META_KEY_CONTENT, self::META_KEY_RENDER ) as $key ) {
 			if ( isset( $_POST[ $key ] ) && ! empty( $_POST[ $key ] ) ) {
 				update_post_meta( $post->ID, $key, $_POST[ $key ] );
@@ -237,6 +245,28 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Save custom content change
+	 *
+	 * @param int $post_id
+	 */
+	static public function record_custom_content_change( $post_id ) {
+		global $current_user;
+		add_post_meta( $post_id, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => $current_user->ID ) );
+	}
+
+	/**
+	 * Verifies if strings are identical. This is split as its own function to allow for unit testing.
+	 *
+	 * @param string $from_db
+	 * @param string $posted
+	 * @return boolean
+	 */
+	static public function posted_same_as_from_db( $posted, $from_db ) {
+		if ( $from_db === $posted ) return true;
+		return false;
 	}
 
 	public static function scripts_styles() {
