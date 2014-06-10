@@ -204,8 +204,7 @@ abstract class MetaBox {
 	 */
 	function _save( $post_id ) {
 		$this->current_post = get_post( $post_id );
-		$is_prevent_save    = apply_filters( 'wpized_metabox_prevent_save', false, $this, $post_id );
-		if ( empty( $is_prevent_save ) && $this->is_metabox_for_post_type() && $this->validate() ) {
+		if ( $this->is_metabox_for_post_type() && $this->validate() ) {
 			$this->save( $this->current_post );
 		}
 	}
