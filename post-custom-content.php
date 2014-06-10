@@ -25,7 +25,6 @@ $post_types = array(
 	'rogers_spotlight'   => false,
 	'rogers_video'       => false,
 );
-$post_types = apply_filters( 'custom_content_post_types', $post_types );
 
 $settings = array(
 	'post_types' => $post_types,
@@ -52,7 +51,8 @@ class Post_Custom_Content {
 	}
 
 	static function get_post_types() {
-		return array_keys( array_filter( self::$options['post_types'] ) );
+		$post_types = apply_filters( 'custom_content_post_types', self::$options['post_types'], 10, 1 );
+		return array_keys( array_filter( $post_types ) );
 	}
 
 
