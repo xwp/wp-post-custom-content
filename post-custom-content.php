@@ -225,6 +225,39 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 		<p>
 			<button class="button button-primary" id="add-custom-content"><?php _e( '+ Add custom content', WPIZED_LOCALE ) ?></button>
 		</p>
+
+		<?php
+		$history = get_post_meta( $post->ID, self::META_KEY_HISTORY, false );
+		if ( empty( $history ) ) return;
+
+		?>
+		<p>History of changes to the custom content fields</p>
+		<ul>
+		<?php
+		foreach ( $history as $entry ) {
+			$author = get_the_author_meta( 'display_name', $entry['author'] );
+
+			/* translators: revision date format, see http://php.net/date */
+			$datef = _x( 'j F, Y @ G:i:s', 'revision date format');
+
+			$gravatar = get_avatar( $entry['author'], 24 );
+
+			$date = date_i18n( $datef, $entry['time'] );
+
+			$revision_date_author = sprintf(
+				/* translators: post revision title: 1: author avatar, 2: author name, 3: time ago, 4: date */
+				_x( '%1$s %2$s, %3$s ago (%4$s)', 'post revision title' ),
+				$gravatar,
+				$author,
+				human_time_diff( $entry['time'], current_time( 'timestamp' ) ),
+				$date
+			);
+			?>
+			<li><?php echo $revision_date_author; ?></li>
+			<?php
+		}
+		?>
+		</ul>
 		<?php
 	}
 
@@ -265,7 +298,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 	 * @return boolean
 	 */
 	static public function posted_same_as_from_db( $posted, $from_db ) {
-		$posted = str_replace( '\\', ',', $posted );
+		$posted = str_replace( '\\', '', $posted );
 		if ( $from_db === $posted ) return true;
 		return false;
 	}
