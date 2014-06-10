@@ -230,7 +230,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	public function save( $post ) {
 		$current_content = get_post_meta( $post->ID, self::META_KEY_CONTENT, true );
-		$posted = str_replace( "\\", '', $_POST[ self::META_KEY_CONTENT ] );
+		$posted = $_POST[ self::META_KEY_CONTENT ];
 
 		if ( ! self::posted_same_as_from_db( $posted, $current_content ) ) {
 			self::record_custom_content_change( $post->ID );
@@ -265,6 +265,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 	 * @return boolean
 	 */
 	static public function posted_same_as_from_db( $posted, $from_db ) {
+		$posted = str_replace( '\\', ',', $posted );
 		if ( $from_db === $posted ) return true;
 		return false;
 	}
