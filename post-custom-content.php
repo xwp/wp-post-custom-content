@@ -231,7 +231,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 		if ( empty( $history ) ) return;
 
 		?>
-		<p>History of changes to the custom content fields</p>
+		<p>History of changes to the custom content fields:</p>
 		<ul>
 		<?php
 		foreach ( $history as $entry ) {
