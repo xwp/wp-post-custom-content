@@ -228,6 +228,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			return;
 		}
 
+		usort( $history, function( $a, $b ) { return $b['order'] - $a['order']; } );
 		?>
 		<p>History of changes to the custom content fields:</p>
 		<ul>
@@ -250,8 +251,18 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 				human_time_diff( $entry['time'], current_time( 'timestamp' ) ),
 				$date
 			);
+
+			$allowed_html = array(
+				'img' => array(
+					'src'    => array(),
+					'height' => array(),
+					'width'  => array(),
+					'alt'    => array(),
+					'class'  => array(),
+				),
+			);
 			?>
-			<li><?php echo esc_html( $revision_date_author ); ?></li>
+			<li><?php echo wp_kses( $revision_date_author, $allowed_html ); ?></li>
 			<?php
 		}
 		?>
@@ -261,46 +272,20 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	public function save( $post ) {
 		$current_content = get_post_meta( $post->ID, self::META_KEY_CONTENT, true );
-		$posted = $_POST[ self::META_KEY_CONTENT ];
+		$posted = wp_unslash( $_POST[ self::META_KEY_CONTENT ] );
 
-		if ( ! self::posted_same_as_from_db( $posted, $current_content ) ) {
-			self::record_custom_content_change( $post->ID );
+		if ( $posted != $current_content ) {
+			add_post_meta( $post_id, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => wp_get_current_user()->ID ) );
 		}
 
 		foreach ( array( self::META_KEY_CONTENT, self::META_KEY_RENDER ) as $key ) {
 			if ( isset( $_POST[ $key ] ) && ! empty( $_POST[ $key ] ) ) {
 				update_post_meta( $post->ID, $key, $_POST[ $key ] );
-			}
-			else {
+			} else {
 				delete_post_meta( $post->ID, $key );
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Save custom content change
-	 *
-	 * @param int $post_id
-	 */
-	static public function record_custom_content_change( $post_id ) {
-		global $current_user;
-		add_post_meta( $post_id, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => $current_user->ID ) );
-	}
-
-	/**
-	 * Verifies if strings are identical. This is split as its own function to allow for unit testing.
-	 *
-	 * @param string $from_db
-	 * @param string $posted
-	 * @return boolean
-	 */
-	static public function posted_same_as_from_db( $posted, $from_db ) {
-		$posted = str_replace( '\\', '', $posted );
-		if ( $from_db === $posted ) {
-			return true;
-		}
-		return false;
 	}
 
 	public static function scripts_styles() {
