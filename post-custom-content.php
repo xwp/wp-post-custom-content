@@ -86,8 +86,9 @@ class Post_Custom_Content {
 			$custom_content_render = array( true );
 		}
 
-		if ( ! $custom_content )
+		if ( ! $custom_content ) {
 			return $content;
+		}
 
 		foreach ( $custom_content as $index => $row_content ) {
 			if ( $custom_content_render[ $index ] ) // custom content may rendered via shortcode
@@ -118,8 +119,9 @@ class Post_Custom_Content {
 	public static function _shortcode_handler( $atts = '' ) {
 		global $post;
 
-		if ( ! in_array( $post->post_type, self::get_post_types() ) )
+		if ( ! in_array( $post->post_type, self::get_post_types() ) ) {
 			return null;
+		}
 
 		extract(
 			shortcode_atts(
@@ -132,10 +134,11 @@ class Post_Custom_Content {
 
 		$custom_content = get_post_meta( $post->ID, Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
 
-		if ( isset( $custom_content[ $id - 1 ] ) )
+		if ( isset( $custom_content[ $id - 1 ] ) ) {
 			return $custom_content[ $id - 1 ];
-		else
+		} else {
 			return null;
+		}
 	}
 }
 
@@ -227,7 +230,9 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 		<?php
 		$history = get_post_meta( $post->ID, self::META_KEY_HISTORY, false );
-		if ( empty( $history ) ) return;
+		if ( empty( $history ) ) {
+			return;
+		}
 
 		?>
 		<p>History of changes to the custom content fields:</p>
@@ -298,7 +303,9 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 	 */
 	static public function posted_same_as_from_db( $posted, $from_db ) {
 		$posted = str_replace( '\\', '', $posted );
-		if ( $from_db === $posted ) return true;
+		if ( $from_db === $posted ) {
+			return true;
+		}
 		return false;
 	}
 
