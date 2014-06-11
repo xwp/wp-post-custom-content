@@ -101,14 +101,8 @@ class Post_Custom_Content {
 
 	static function get_script_registry( $dep_args = array() ) {
 		$dep_args = wp_parse_args( $dep_args );
-		return array(
-			'ace-editor' => array_merge(
-				$dep_args,
-				array(
-					'src' => plugins_url( 'vendor/ace/ace.js', __FILE__ ),
-				)
-			),
-		);
+		$src = plugins_url( 'vendor/ace/ace.js', __FILE__ );
+		return array( 'ace-editor' => array_merge( $dep_args, compact( 'src' ) ) );
 	}
 
 	/**
@@ -242,7 +236,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			$author = get_the_author_meta( 'display_name', $entry['author'] );
 
 			/* translators: revision date format, see http://php.net/date */
-			$datef = _x( 'j F, Y @ G:i:s', 'revision date format');
+			$datef = _x( 'j F, Y @ G:i:s', 'revision date format' );
 
 			$gravatar = get_avatar( $entry['author'], 24 );
 
@@ -257,7 +251,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 				$date
 			);
 			?>
-			<li><?php echo $revision_date_author; ?></li>
+			<li><?php echo esc_html( $revision_date_author ); ?></li>
 			<?php
 		}
 		?>
