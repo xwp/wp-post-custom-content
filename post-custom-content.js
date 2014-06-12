@@ -29,7 +29,6 @@
 
 				$wrapper.append($editor_element);
 				editor = ace.edit( $editor_element.attr('id') );
-				$('#title').focus(); // Ensures the post/page title field is given focus on load
 				editor.setPrintMarginColumn(9999);
 				editor_session = editor.getSession();
 				editor_session.setValue($textarea.val());
