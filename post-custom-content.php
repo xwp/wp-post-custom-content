@@ -126,6 +126,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	const META_KEY_CONTENT = '_xteam_post_custom_content';
 	const META_KEY_RENDER  = '_xteam_post_custom_content_render';
+	const META_KEY_HISTORY = '_xteam_post_custom_content_history';
 
 	const CSS_HANDLER = 'xteam_post_custom_content_css';
 	const JS_HANDLER  = 'xteam_post_custom_content_js';
@@ -212,7 +213,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			return;
 		}
 
-		usort( $history, function( $a, $b ) { return $b['order'] - $a['order']; } );
+		usort( $history, function( $a, $b ) { return $b['time'] - $a['time']; } );
 		?>
 		<p>History of changes to the custom content fields:</p>
 		<ul>
@@ -259,7 +260,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 		$posted = wp_unslash( $_POST[ self::META_KEY_CONTENT ] );
 
 		if ( $posted != $current_content ) {
-			add_post_meta( $post_id, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => wp_get_current_user()->ID ) );
+			add_post_meta( $post->ID, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => wp_get_current_user()->ID ) );
 		}
 
 		foreach ( array( self::META_KEY_CONTENT, self::META_KEY_RENDER ) as $key ) {
