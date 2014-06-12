@@ -71,8 +71,9 @@ class Post_Custom_Content {
 			$custom_content_render = array( true );
 		}
 
-		if ( ! $custom_content )
+		if ( ! $custom_content ) {
 			return $content;
+		}
 
 		foreach ( $custom_content as $index => $row_content ) {
 			if ( $custom_content_render[ $index ] ) // custom content may rendered via shortcode
@@ -85,14 +86,8 @@ class Post_Custom_Content {
 
 	static function get_script_registry( $dep_args = array() ) {
 		$dep_args = wp_parse_args( $dep_args );
-		return array(
-			'ace-editor' => array_merge(
-				$dep_args,
-				array(
-					'src' => plugins_url( 'vendor/ace/ace.js', __FILE__ ),
-				)
-			)
-		);
+		$src = plugins_url( 'vendor/ace/ace.js', __FILE__ );
+		return array( 'ace-editor' => array_merge( $dep_args, compact( 'src' ) ) );
 	}
 
 	/**
@@ -103,8 +98,9 @@ class Post_Custom_Content {
 	public static function _shortcode_handler( $atts = '' ) {
 		global $post;
 
-		if ( ! in_array( $post->post_type, self::get_post_types() ) )
+		if ( ! in_array( $post->post_type, self::get_post_types() ) ) {
 			return null;
+		}
 
 		extract(
 			shortcode_atts(
@@ -117,10 +113,11 @@ class Post_Custom_Content {
 
 		$custom_content = get_post_meta( $post->ID, Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
 
-		if ( isset( $custom_content[ $id - 1 ] ) )
+		if ( isset( $custom_content[ $id - 1 ] ) ) {
 			return $custom_content[ $id - 1 ];
-		else
+		} else {
 			return null;
+		}
 	}
 }
 
@@ -129,6 +126,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
 	const META_KEY_CONTENT = '_xteam_post_custom_content';
 	const META_KEY_RENDER  = '_xteam_post_custom_content_render';
+	const META_KEY_HISTORY = '_xteam_post_custom_content_history';
 
 	const CSS_HANDLER = 'xteam_post_custom_content_css';
 	const JS_HANDLER  = 'xteam_post_custom_content_js';
@@ -208,15 +206,67 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 		<p>
 			<button class="button button-primary" id="add-custom-content"><?php _e( '+ Add custom content' ) ?></button>
 		</p>
+
+		<?php
+		$history = get_post_meta( $post->ID, self::META_KEY_HISTORY, false );
+		if ( empty( $history ) ) {
+			return;
+		}
+
+		usort( $history, function( $a, $b ) { return $b['time'] - $a['time']; } );
+		?>
+		<p>History of changes to the custom content fields:</p>
+		<ul>
+		<?php
+		foreach ( $history as $entry ) {
+			$author = get_the_author_meta( 'display_name', $entry['author'] );
+
+			/* translators: revision date format, see http://php.net/date */
+			$datef = _x( 'j F, Y @ G:i:s', 'revision date format' );
+
+			$gravatar = get_avatar( $entry['author'], 24 );
+
+			$date = date_i18n( $datef, $entry['time'] );
+
+			$revision_date_author = sprintf(
+				/* translators: post revision title: 1: author avatar, 2: author name, 3: time ago, 4: date */
+				_x( '%1$s %2$s, %3$s ago (%4$s)', 'post revision title' ),
+				$gravatar,
+				$author,
+				human_time_diff( $entry['time'], current_time( 'timestamp' ) ),
+				$date
+			);
+
+			$allowed_html = array(
+				'img' => array(
+					'src'    => array(),
+					'height' => array(),
+					'width'  => array(),
+					'alt'    => array(),
+					'class'  => array(),
+				),
+			);
+			?>
+			<li><?php echo wp_kses( $revision_date_author, $allowed_html ); ?></li>
+			<?php
+		}
+		?>
+		</ul>
 		<?php
 	}
 
 	public function save( $post ) {
+		$current_content = get_post_meta( $post->ID, self::META_KEY_CONTENT, true );
+		$posted = wp_unslash( $_POST[ self::META_KEY_CONTENT ] );
+
+		if ( $posted != $current_content ) {
+			add_post_meta( $post->ID, self::META_KEY_HISTORY, array( 'time' => current_time( 'timestamp' ), 'author' => wp_get_current_user()->ID ) );
+		}
+
 		foreach ( array( self::META_KEY_CONTENT, self::META_KEY_RENDER ) as $key ) {
 			if ( isset( $_POST[ $key ] ) && ! empty( $_POST[ $key ] ) ) {
 				update_post_meta( $post->ID, $key, $_POST[ $key ] );
-			}
-			else {
+			} else {
 				delete_post_meta( $post->ID, $key );
 			}
 		}
