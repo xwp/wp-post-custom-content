@@ -1,5 +1,7 @@
-/*global jQuery, ace*/
+/*global jQuery, ace, xteam_post_custom_content_i18n */
 (function($) {
+	'use strict';
+
 	// Plugin interface
 	$.fn.xteam_post_custom_content = function(options) {
 		var settings = $.extend({
