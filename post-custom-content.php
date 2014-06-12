@@ -72,8 +72,9 @@ class Post_Custom_Content {
 		}
 
 		foreach ( $custom_content as $index => $row_content ) {
-			if ( $custom_content_render[ $index ] ) // custom content may rendered via shortcode
+			if ( $custom_content_render[ $index ] ) { // custom content may rendered via shortcode
 				$content .= $row_content;
+			}
 		}
 
 		return $content;
@@ -89,7 +90,8 @@ class Post_Custom_Content {
 	/**
 	 * Handler for `[custom_content]` shortcode.
 	 *
-	 * @param mixed an associative array of attributes, or an empty string if no attributes are given
+	 * @param mixed $atts an associative array of attributes, or an empty string if no attributes are given
+	 * @return string|null
 	 */
 	public static function _shortcode_handler( $atts = '' ) {
 		global $post;
@@ -106,6 +108,9 @@ class Post_Custom_Content {
 				$atts
 			)
 		);
+		/**
+		 * @var string $id
+		 */
 
 		$custom_content = get_post_meta( $post->ID, Post_Custom_Content_Metabox::META_KEY_CONTENT, true );
 
@@ -170,7 +175,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 								id="<?php echo esc_attr( sprintf( '%s_%d_1', self::META_KEY_RENDER, $index ) ) ?>"
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="1"
-								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 1 ) ?>>
+								<?php checked( isset( $custom_content_render[ $index ] ) ? intval( $custom_content_render[ $index ] ) : 0, 1 ) ?>>
 							<?php _e( 'Render automatically below the content' ); ?>
 						</label>
 						<br>
@@ -180,7 +185,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 								id="<?php echo esc_attr( sprintf( '%s_%d_0', self::META_KEY_RENDER, $index ) ) ?>"
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="0"
-								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
+								<?php checked( isset( $custom_content_render[ $index ] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
 							<?php _e( 'Use shortcode to render' ); ?>
 							<br>
 							<code class="shortcode"><?php printf( '[%s id=%d]', Post_Custom_Content::$shortcode, $index + 1 ); ?></code>

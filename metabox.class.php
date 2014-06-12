@@ -207,7 +207,7 @@ abstract class MetaBox {
 
 	/**
 	 * Returns true if the this metabox is registered for this post type
-	 * @return {bool}
+	 * @return bool
 	 */
 	function is_metabox_for_post_type() {
 		return $this->current_post->post_type == $this->args['page'];
@@ -282,6 +282,15 @@ abstract class MetaBox {
 	 */
 	function _add_meta_box() {
 		extract( $this->args );
+		/**
+		 * @var string $id
+		 * @var string $title
+		 * @var callable $callback
+		 * @var string $page
+		 * @var string $context
+		 * @var string $priority
+		 * @var array $callback_args
+		 */
 		if ( ! get_post_type_object( $page ) ) {
 			trigger_error( sprintf( __( 'No post type "%s" registered to add metabox for' ), $page ), E_USER_NOTICE );
 		}
