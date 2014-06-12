@@ -11,30 +11,15 @@ use XTeam\Custom_Content;
 
 require_once(  plugin_dir_path( __FILE__ ) . 'metabox.class.php' );
 
-$post_types = array(
-	'post'               => true,
-	'page'               => true,
-	'rogers_alert'       => false,
-	'rogers_bio'         => true,
-	'rogers_contest'     => true,
-	'rogers_episode'     => true,
-	'rogers_event'       => false,
-	'rogers_extra'       => true,
-	'rogers_poll'        => false,
-	'rogers_social_post' => false,
-	'rogers_spotlight'   => false,
-	'rogers_video'       => false,
-);
-
 $settings = array(
-	'post_types' => $post_types,
+	'post_types' => array( 'post' => true, 'page' => true ),
 	'capability' => 'edit_others_posts',
 );
 
 Post_Custom_Content::setup( $settings );
 
 class Post_Custom_Content {
-	const SHORTCODE = 'wpized_custom_content';
+	const SHORTCODE = 'custom_content';
 
 	static $options = array();
 
@@ -106,7 +91,7 @@ class Post_Custom_Content {
 	}
 
 	/**
-	 * Handler for `[wpized_custom_content]` shortcode.
+	 * Handler for `[custom_content]` shortcode.
 	 *
 	 * @param mixed an associative array of attributes, or an empty string if no attributes are given
 	 */
@@ -139,19 +124,18 @@ class Post_Custom_Content {
 
 class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 
-	const META_KEY_CONTENT = '_wpized_post_custom_content';
-	const META_KEY_RENDER  = '_wpized_post_custom_content_render';
-	const META_KEY_HISTORY = '_wpized_post_custom_content_history';
+	const META_KEY_CONTENT = '_xteam_post_custom_content';
+	const META_KEY_RENDER  = '_xteam_post_custom_content_render';
 
-	const CSS_HANDLER = 'wpized_post_custom_content_css';
-	const JS_HANDLER  = 'wpized_post_custom_content_js';
-	const JS_I18N_VAR = 'wpized_post_custom_content_i18n';
+	const CSS_HANDLER = 'xteam_post_custom_content_css';
+	const JS_HANDLER  = 'xteam_post_custom_content_js';
+	const JS_I18N_VAR = 'xteam_post_custom_content_i18n';
 
 	public function __construct( $args = array() ) {
 		parent::__construct(
 			array_merge(
 				array(
-					'title'   => __( 'Custom Content', WPIZED_LOCALE ),
+					'title'   => __( 'Custom Content' ),
 					'scripts' => Post_Custom_Content::get_script_registry(),
 				),
 				$args
@@ -176,7 +160,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			<li data-index="<?php echo esc_attr( $index ); ?>" class="postbox">
 				<div class="handlediv" title="Click to toggle"><br></div>
 				<h3 class="hndle">
-					<span><?php _e( 'Custom content #id =', WPIZED_LOCALE ) ?></span>
+					<span><?php _e( 'Custom content #id =' ) ?></span>
 					<span class="row-index"><?php echo esc_html( $index + 1 ) ?></span>
 				</h3>
 
@@ -190,7 +174,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="1"
 								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 1 ) ?>>
-							<?php _e( 'Render automatically below the content', WPIZED_LOCALE ); ?>
+							<?php _e( 'Render automatically below the content' ); ?>
 						</label>
 						<br>
 						<label>
@@ -200,16 +184,16 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 								name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_RENDER, $index ) ) ?>"
 								value="0"
 								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
-							<?php _e( 'Use shortcode to render', WPIZED_LOCALE ); ?>
+							<?php _e( 'Use shortcode to render' ); ?>
 							<br>
 							<code class="shortcode"><?php printf( '[%s id=%d]', Post_Custom_Content::SHORTCODE, $index + 1 ); ?></code>
 						</label>
 
-						<a href="#" class="remove-custom-content"><?php _e( 'Remove', WPIZED_LOCALE ) ?></a>
+						<a href="#" class="remove-custom-content"><?php _e( 'Remove' ) ?></a>
 					</div>
 					<!-- / custom-content-options -->
 					<div class="ace-editor-wrapper">
-						<label class="screen-reader-text" for="post-custom-content"><?php _e( 'Custom Content', WPIZED_LOCALE ) ?></label>
+						<label class="screen-reader-text" for="post-custom-content"><?php _e( 'Custom Content' ) ?></label>
 						<textarea name="<?php echo esc_attr( sprintf( '%s[%d]', self::META_KEY_CONTENT, $index ) ) ?>" class="widefat" rows="10"><?php echo esc_textarea( $row ) ?></textarea>
 					</div>
 					<!-- / ace-editor-wrapper -->
@@ -219,7 +203,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 			<?php endforeach ?>
 		</ul>
 		<p>
-			<button class="button button-primary" id="add-custom-content"><?php _e( '+ Add custom content', WPIZED_LOCALE ) ?></button>
+			<button class="button button-primary" id="add-custom-content"><?php _e( '+ Add custom content' ) ?></button>
 		</p>
 
 		<?php
@@ -314,7 +298,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 					'field_render'  => self::META_KEY_RENDER,
 					'field_content' => self::META_KEY_CONTENT,
 					'shortcode_tag' => Post_Custom_Content::SHORTCODE,
-					'help_message'  => __( '⤹ Drag and drop rows below to reorder', WPIZED_LOCALE ),
+					'help_message'  => __( '⤹ Drag and drop rows below to reorder' ),
 				)
 			);
 		}
