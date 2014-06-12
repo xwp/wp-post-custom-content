@@ -11,28 +11,24 @@ use XTeam\Custom_Content;
 
 require_once(  plugin_dir_path( __FILE__ ) . 'metabox.class.php' );
 
-$settings = array(
-	'post_types' => array( 'post' => true, 'page' => true ),
-	'capability' => 'edit_others_posts',
-);
-
-Post_Custom_Content::setup( $settings );
+add_action( 'init', array( 'Post_Custom_Content', 'setup' ) );
 
 class Post_Custom_Content {
-	const SHORTCODE = 'custom_content';
-
 	static $options = array();
 
-	static function setup( $options = array() ){
-		self::$options = $options;
+	static $shortcode = '';
 
-		if ( empty(self::$options['post_types']) ){
-			return;
-		}
+	static function setup() {
+		self::$options = array(
+			'post_types' => array( 'post' => true, 'page' => true ),
+			'capability' => 'edit_others_posts',
+		);
+
+		self::$shortcode = apply_filters( 'custom_content_shortcode_tag', 'custom_content', 10, 1 );
 
 		add_action( 'admin_init',  array( __CLASS__, '_action_admin_init' ) );
 		add_filter( 'the_content', array( __CLASS__, '_append_custom_content' ) );
-		add_shortcode( self::SHORTCODE, array( __CLASS__, '_shortcode_handler' ) );
+		add_shortcode( self::$shortcode, array( __CLASS__, '_shortcode_handler' ) );
 	}
 
 	static function get_post_types() {
@@ -187,7 +183,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 								<?php checked( isset( $custom_content_render[$index] ) ? intval( $custom_content_render[ $index ] ) : 0, 0 ) ?>>
 							<?php _e( 'Use shortcode to render' ); ?>
 							<br>
-							<code class="shortcode"><?php printf( '[%s id=%d]', Post_Custom_Content::SHORTCODE, $index + 1 ); ?></code>
+							<code class="shortcode"><?php printf( '[%s id=%d]', Post_Custom_Content::$shortcode, $index + 1 ); ?></code>
 						</label>
 
 						<a href="#" class="remove-custom-content"><?php _e( 'Remove' ) ?></a>
@@ -298,7 +294,7 @@ class Post_Custom_Content_Metabox extends Custom_Content\MetaBox {
 				array(
 					'field_render'  => self::META_KEY_RENDER,
 					'field_content' => self::META_KEY_CONTENT,
-					'shortcode_tag' => Post_Custom_Content::SHORTCODE,
+					'shortcode_tag' => Post_Custom_Content::$shortcode,
 					'help_message'  => __( '⤹ Drag and drop rows below to reorder' ),
 				)
 			);
