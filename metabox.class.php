@@ -1,9 +1,9 @@
 <?php
 namespace XTeam\Custom_Content;
 /**
- * @todo Like WPized_Widget, should we have a singular get/set_field_error() and has_field_error
- * @todo Like WPized_Widget, should we have get_field_bad_value
- * @todo Like WPized_Widget, we should have a fields_schema
+ * @todo Should we have a singular get/set_field_error() and has_field_error
+ * @todo Should we have get_field_bad_value
+ * @todo We should have a fields_schema
  * @todo There could be a 'serializer' in fields_schema that tells out to take a 'validator' and put it into the control?
  */
 abstract class MetaBox {
@@ -74,11 +74,7 @@ abstract class MetaBox {
 	}
 
 	static function get_prefixed_key( $key ) {
-		$default = '';
-		if ( defined( 'WPIZED_NS' ) ) {
-			$default = WPIZED_NS;
-		}
-		return '_' . WPized_Theme_Config::get( 'namespace', $default ) . '_' . $key;
+		return '_' . $key;
 	}
 
 	function get( $key ){ return $this->get_field_value( $key ); }
@@ -87,7 +83,7 @@ abstract class MetaBox {
 		assert( is_object( $this->current_post ) );
 		return get_post_meta(
 			$this->current_post->ID,
-			self::get_prefixed_key( $key ),
+			$key,
 			true
 		);
 	}
@@ -98,7 +94,7 @@ abstract class MetaBox {
 		// @todo This should check a fields_schema
 		return update_post_meta(
 			$this->current_post->ID,
-			self::get_prefixed_key( $key ),
+			$key,
 			$value
 		);
 	}
@@ -106,7 +102,7 @@ abstract class MetaBox {
 	function delete_field( $key, $value = '' ){
 		return delete_post_meta(
 			$this->current_post->ID,
-			self::get_prefixed_key( $key ),
+			$key,
 			$value
 		);
 	}
@@ -121,9 +117,9 @@ abstract class MetaBox {
 		$field_errors = $this->get_field_errors();
 		if ( ! empty( $field_errors ) ) :
 			?>
-			<div class="error wpized-metabox-field-errors">
+			<div class="error metabox-field-errors">
 				<p>
-					<?php printf( __( '<strong>%s</strong> error(s) with your last save: ', WPIZED_LOCALE ), esc_html( $this->args['title'] ) ); ?><br />
+					<?php printf( __( '<strong>%s</strong> error(s) with your last save: ' ), esc_html( $this->args['title'] ) ); ?><br />
 					<?php echo join( '<br />', array_map( 'esc_html', array_values( $field_errors ) ) ); // xss ok ?>
 				</p>
 			</div>
@@ -287,7 +283,7 @@ abstract class MetaBox {
 	function _add_meta_box() {
 		extract( $this->args );
 		if ( ! get_post_type_object( $page ) ) {
-			trigger_error( sprintf( __( 'No post type "%s" registered to add metabox for', WPIZED_LOCALE ), $page ), E_USER_NOTICE );
+			trigger_error( sprintf( __( 'No post type "%s" registered to add metabox for' ), $page ), E_USER_NOTICE );
 		}
 		add_meta_box( $id, $title, $callback, $page, $context, $priority, $callback_args );
 	}
