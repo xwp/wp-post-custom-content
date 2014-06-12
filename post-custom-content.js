@@ -1,7 +1,9 @@
-/*global jQuery, ace*/
+/*global jQuery, ace, xteam_post_custom_content_i18n */
 (function($) {
+	'use strict';
+
 	// Plugin interface
-	$.fn.wpized_post_custom_content = function(options) {
+	$.fn.xteam_post_custom_content = function(options) {
 		var settings = $.extend({
 			'row'          : 'li',
 			'add_row'      : '#add-custom-content',
@@ -18,7 +20,7 @@
 				});
 			},
 			'bind_ace'     : function($el) {
-				var index           = $el.attr('data-index'),
+				var index                       = $el.attr('data-index'),
 						$wrapper        = $('.ace-editor-wrapper', $el),
 						$textarea       = $('textarea', $wrapper),
 						$editor_element = $('<div class="ace-editor-content" id="ace-editor-content-' + index + '" />'),
@@ -27,7 +29,6 @@
 
 				$wrapper.append($editor_element);
 				editor = ace.edit( $editor_element.attr('id') );
-				$('#title').focus(); // Ensures the post/page title field is given focus on load
 				editor.setPrintMarginColumn(9999);
 				editor_session = editor.getSession();
 				editor_session.setValue($textarea.val());
@@ -85,8 +86,8 @@
 					.attr('name', settings.field_content + '[' + index + ']')
 					.attr('id', settings.field_content + '_' + index)
 					.val('').show();
-				$('.shortcode', $new_row).text( '[' + settings.shortcode_tag + ' id=' + (index+1) + ']' );
-				$('.row-index', $new_row).text(index+1);
+				$( '.shortcode', $new_row ).text( '[' + settings.shortcode_tag + ' id=' + ( index + 1 ) + ']' );
+				$( '.row-index', $new_row ).text( index + 1 );
 
 				// Inject into the list
 				$container.append($new_row);
@@ -104,11 +105,11 @@
 	};
 
 	$(function() {
-		$('#custom-content-list').wpized_post_custom_content({
-			help_message  : wpized_post_custom_content_i18n.help_message,
-			field_render  : wpized_post_custom_content_i18n.field_render,
-			field_content : wpized_post_custom_content_i18n.field_content,
-			shortcode_tag : wpized_post_custom_content_i18n.shortcode_tag
+		$('#custom-content-list').xteam_post_custom_content({
+			help_message  : xteam_post_custom_content_i18n.help_message,
+			field_render  : xteam_post_custom_content_i18n.field_render,
+			field_content : xteam_post_custom_content_i18n.field_content,
+			shortcode_tag : xteam_post_custom_content_i18n.shortcode_tag
 		});
 	});
 }(jQuery));
