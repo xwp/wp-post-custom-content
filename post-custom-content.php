@@ -19,8 +19,16 @@ class Post_Custom_Content {
 	static $shortcode = '';
 
 	static function setup() {
+		$public_post_types = get_post_types( array( 'public' => true ) );
+		$post_types = array();
+		foreach ( $public_post_types as $post_type_slug => $post_type_name ) {
+			if ( post_type_supports( $post_type_slug, 'editor' ) ) {
+				$post_types[ $post_type_slug ] = true;
+			}
+		}
+
 		self::$options = array(
-			'post_types' => array( 'post' => true, 'page' => true ),
+			'post_types' => $post_types,
 			'capability' => 'edit_others_posts',
 		);
 

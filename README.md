@@ -13,7 +13,7 @@ The fields (textarea) are powered by the [ACE editor](http://ace.c9.io).
 
 **Supported Post Types**
 
-By default the fields are add posts and pages. If you need to add them to other post types (for example 'event') you can add the following function to your theme's functions.php or a plugin.
+By default the custom content fields are added to all public post types that support 'editor' (e.g. posts and pages). If you need to add them to other post types (for example 'event') you can add the following function to your theme's functions.php or a plugin.
 
 ```php
 function add_additional_post_types( $post_types ) {
