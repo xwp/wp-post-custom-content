@@ -20,10 +20,6 @@ class Post_Custom_Content {
 
 	static function setup() {
 		$public_post_types = get_post_types( array( 'public' => true ) );
-		if ( empty( $public_post_types ) ) {
-			return;
-		}
-
 		$post_types = array();
 		foreach ( $public_post_types as $post_type_slug => $post_type_name ) {
 			if ( post_type_supports( $post_type_slug, 'editor' ) ) {
