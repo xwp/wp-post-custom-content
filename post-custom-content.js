@@ -20,7 +20,7 @@
 				});
 			},
 			'bind_ace'     : function($el) {
-				var index                       = $el.attr('data-index'),
+				var index           = $el.attr('data-index'),
 						$wrapper        = $('.ace-editor-wrapper', $el),
 						$textarea       = $('textarea', $wrapper),
 						$editor_element = $('<div class="ace-editor-content" id="ace-editor-content-' + index + '" />'),
